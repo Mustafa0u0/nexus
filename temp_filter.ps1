@@ -1,0 +1,1 @@
+git filter-branch --force --index-filter 'git rm --cached --ignore-unmatch "Testing files/.env" "Testing files/nexus_personaplex.ipynb"' --prune-empty --tag-name-filter cat -- --all

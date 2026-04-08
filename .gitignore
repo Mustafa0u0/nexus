@@ -1,0 +1,16 @@
+
+__pycache__/
+*.py[cod]
+*$py.class
+sessions/
+research_data/
+*.mp3
+*.wav
+*.webm
+.vscode/
+.idea/
+tmp/
+.env
+nexus_personaplex.ipynb
+.venv/
+venv/

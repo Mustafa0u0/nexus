@@ -1,0 +1,1034 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | AI Interview</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils@0.3/camera_utils.js"
+        crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg: #fafafa;
+            --card: #ffffff;
+            --hover: #f8fafc;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --green: #10b981;
+            --red: #ef4444;
+            --orange: #f59e0b;
+            --radius: 8px;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --card: #18181b;
+            --hover: #27272a;
+            --border: #3f3f46;
+            --text: #fafafa;
+            --muted: #a1a1aa;
+            --primary: #fafafa;
+            --accent: #60a5fa;
+            --green: #34d399;
+            --red: #f87171;
+            --orange: #fbbf24;
+            --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .topbar {
+            height: 52px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            z-index: 40;
+            transition: background 0.3s;
+        }
+
+        .topbar-brand {
+            font-weight: 600;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tag {
+            font-size: 0.65rem;
+            background: var(--hover);
+            color: var(--muted);
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.3rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            color: var(--muted);
+            transition: all 0.15s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--hover);
+            color: var(--text);
+        }
+
+        .app {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 320px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            overflow-y: auto;
+            transition: background 0.3s;
+        }
+
+        .sidebar-section {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-section:last-child {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 0.35rem;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.85rem;
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--card);
+            transition: all 0.15s;
+            margin-bottom: 0.75rem;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--muted);
+        }
+
+        input[type="file"] {
+            padding: 0.4rem;
+            font-size: 0.75rem;
+            background: var(--hover);
+            font-family: var(--mono);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text);
+            padding: 0.5rem 0.9rem;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            font-weight: 500;
+            font-family: var(--sans);
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            background: var(--hover);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-green {
+            background: var(--green);
+            color: #fff;
+            border-color: var(--green);
+        }
+
+        .status-msg {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-top: 0.5rem;
+            min-height: 1.2rem;
+        }
+
+        .status-msg.err {
+            color: var(--red);
+        }
+
+        .status-msg.ok {
+            color: var(--green);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.4rem 0;
+            font-size: 0.8rem;
+        }
+
+        .info-label {
+            color: var(--muted);
+        }
+
+        .info-value {
+            font-weight: 500;
+            font-family: var(--mono);
+            font-size: 0.75rem;
+        }
+
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            background: var(--bg);
+            transition: background 0.3s;
+        }
+
+        /* ─── Mic Test ─── */
+        .mic-test {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.25rem;
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .mic-test-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            width: 100%;
+            text-align: center;
+        }
+
+        .mic-test-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .level-bars {
+            display: flex;
+            gap: 3px;
+            justify-content: center;
+            align-items: flex-end;
+            height: 50px;
+            margin: 1.5rem 0;
+        }
+
+        .level-bar {
+            width: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            transition: height 0.1s, background 0.1s;
+        }
+
+        .level-bar.active {
+            background: var(--green);
+        }
+
+        /* ─── Interview Screen ─── */
+        .interview-ui {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+            width: 100%;
+            max-width: 640px;
+        }
+
+        .mic-orb {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            color: var(--muted);
+            transition: all 0.25s ease;
+        }
+
+        .mic-orb svg {
+            width: 28px;
+            height: 28px;
+        }
+
+        .mic-orb.ready {
+            border-color: var(--green);
+            color: var(--green);
+            background: color-mix(in srgb, var(--green) 8%, var(--card));
+            box-shadow: 0 0 0 6px color-mix(in srgb, var(--green) 8%, transparent);
+            animation: pulse-ready 1.5s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .mic-orb.recording {
+            border-color: var(--red);
+            color: var(--red);
+            background: color-mix(in srgb, var(--red) 8%, var(--card));
+            box-shadow: 0 0 0 6px color-mix(in srgb, var(--red) 8%, transparent);
+            animation: breathe 1.4s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        .mic-orb.speaking {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: color-mix(in srgb, var(--accent) 8%, var(--card));
+            box-shadow: 0 0 0 6px color-mix(in srgb, var(--accent) 8%, transparent);
+        }
+
+        .mic-orb.processing {
+            border-color: var(--orange);
+            color: var(--orange);
+            animation: spin 1.2s linear infinite;
+        }
+
+        @keyframes pulse-ready {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px color-mix(in srgb, var(--green) 8%, transparent);
+            }
+
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 0 0 12px color-mix(in srgb, var(--green) 15%, transparent);
+            }
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.06);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .transcript-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem 2rem;
+            width: 100%;
+            box-shadow: var(--shadow);
+            min-height: 80px;
+            transition: background 0.3s;
+        }
+
+        .transcript-role {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            margin-bottom: 0.4rem;
+        }
+
+        .transcript-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+
+        .telemetry-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            font-family: var(--mono);
+            font-size: 0.7rem;
+            color: var(--muted);
+        }
+
+        .telemetry-chip {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.15rem 0.5rem;
+        }
+
+        /* Timer */
+        .timer {
+            font-family: var(--mono);
+            font-size: 0.85rem;
+            color: var(--muted);
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 0.25rem 0.75rem;
+        }
+
+        /* Camera PiP */
+        .camera-pip {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            width: 180px;
+            height: 135px;
+            background: #000;
+            border-radius: var(--radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 30;
+        }
+
+        .camera-pip video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        .eye-badge {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            font-size: 0.6rem;
+            font-family: var(--mono);
+            background: rgba(0, 0, 0, 0.6);
+            color: #10b981;
+            padding: 1px 5px;
+            border-radius: 4px;
+        }
+
+        .setup-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: var(--shadow);
+            max-width: 480px;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        .setup-card h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .setup-card p {
+            color: var(--muted);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                max-height: 45vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-brand">NEXUS <span class="tag">Interview</span></div>
+        <div class="topbar-actions">
+            <div id="timer-display" class="timer" style="display:none;">00:00</div>
+            <div id="session-tag" class="tag" style="font-family:var(--mono);">No session</div>
+            <button class="theme-toggle" onclick="toggleTheme()">☀/☽</button>
+        </div>
+    </div>
+
+    <div class="app">
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="section-title">Interview Setup</div>
+                <label>Interview Code</label>
+                <input id="interview-code" type="text" placeholder="Enter code from recruiter..."
+                    style="text-transform: uppercase; font-family: var(--mono); letter-spacing: 0.15em; font-size: 1rem; text-align: center;">
+                <label>Your Resume / CV</label>
+                <input id="cv-file" type="file" accept=".pdf,.doc,.docx,.txt">
+                <button id="start-btn" class="btn btn-primary btn-full">Start Interview</button>
+                <div id="setup-msg" class="status-msg"></div>
+            </div>
+            <div class="sidebar-section" id="candidate-info" style="display:none;">
+                <div class="section-title">Session Info</div>
+                <div class="info-row"><span class="info-label">Name</span><span id="c-name" class="info-value">—</span>
+                </div>
+                <div class="info-row"><span class="info-label">Role</span><span id="c-role" class="info-value">—</span>
+                </div>
+                <div class="info-row"><span class="info-label">Status</span><span id="c-status"
+                        class="info-value">—</span></div>
+                <div class="info-row"><span class="info-label">Progress</span><span id="q-progress" class="info-value">0
+                        / 10</span></div>
+            </div>
+        </div>
+
+        <div class="main">
+            <!-- Setup state -->
+            <div id="setup-state" class="setup-card">
+                <h2>Welcome to NEXUS</h2>
+                <p>Enter the interview code provided by your recruiter and upload your resume to begin.</p>
+            </div>
+
+            <!-- Mic Test state -->
+            <div id="mic-test-state" class="mic-test">
+                <div class="mic-test-card">
+                    <h3>🎤 Microphone Check</h3>
+                    <p style="color: var(--muted); font-size: 0.85rem;">Speak to test your mic. You should see the bars
+                        move.</p>
+                    <div class="level-bars" id="level-bars"></div>
+                    <button id="mic-ok-btn" class="btn btn-green btn-full">Sounds Good — Begin Interview</button>
+                </div>
+            </div>
+
+            <!-- Interview state -->
+            <div id="interview-ui" class="interview-ui">
+                <div class="mic-orb" id="mic-orb">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" />
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                        <line x1="12" y1="19" x2="12" y2="22" />
+                    </svg>
+                </div>
+                <div class="transcript-card">
+                    <div id="speaker-label" class="transcript-role">System</div>
+                    <div id="transcript-display" class="transcript-text">Initializing session...</div>
+                </div>
+                <div id="speak-hint" style="font-size:0.8rem; color:var(--green); font-weight:500; display:none;">Press
+                    <kbd
+                        style="background:var(--card);border:1px solid var(--border);padding:0.1rem 0.4rem;border-radius:4px;font-family:var(--mono);font-size:0.75rem;">Tab</kbd>
+                    or click the mic to speak
+                </div>
+                <div class="telemetry-bar">
+                    <span id="call-status">Microphone standby</span>
+                    <span id="latency-chip" class="telemetry-chip" style="display:none;">—ms</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="camera-pip" class="camera-pip">
+        <video id="user-video" autoplay muted playsinline></video>
+        <div id="eye-badge" class="eye-badge">EYE: —</div>
+    </div>
+
+    <script>
+        const API = window.location.origin;
+        const $ = id => document.getElementById(id);
+
+        // ─── Theme ───
+        function toggleTheme() {
+            const isDark = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', isDark ? '' : 'dark');
+            localStorage.setItem('nexus-theme', isDark ? 'light' : 'dark');
+        }
+        (function () {
+            const saved = localStorage.getItem('nexus-theme');
+            if (saved === 'dark') document.body.setAttribute('data-theme', 'dark');
+        })();
+
+        // ─── DOM ───
+        const interviewCode = $('interview-code');
+        const cvFile = $('cv-file');
+        const startBtn = $('start-btn');
+        const setupMsg = $('setup-msg');
+        const setupState = $('setup-state');
+        const micTestState = $('mic-test-state');
+        const interviewUi = $('interview-ui');
+        const micOrb = $('mic-orb');
+        const speakerLabel = $('speaker-label');
+        const transcriptDisplay = $('transcript-display');
+        const callStatus = $('call-status');
+        const latencyChip = $('latency-chip');
+        const sessionTag = $('session-tag');
+        const candidateInfo = $('candidate-info');
+        const cameraPip = $('camera-pip');
+        const userVideo = $('user-video');
+        const eyeBadge = $('eye-badge');
+        const timerDisplay = $('timer-display');
+
+        let currentSessionId = null;
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let silenceTimer = null;
+        let isAiSpeaking = false;
+        let localStream = null;
+        let audioContext, analyser, microphone;
+        let questionCount = 0;
+        let timerInterval = null;
+        let timerSeconds = 0;
+
+        // ─── Ready State: show candidate it's their turn ───
+        function setReadyState() {
+            micOrb.className = 'mic-orb ready';
+            speakerLabel.textContent = 'Your Turn';
+            transcriptDisplay.textContent = 'Press Tab or click the mic to respond.';
+            callStatus.textContent = 'Ready — waiting for you';
+            $('speak-hint').style.display = 'block';
+        }
+
+        function msg(text, type = '') {
+            setupMsg.textContent = text;
+            setupMsg.className = 'status-msg ' + type;
+        }
+
+        // ─── Timer ───
+        function startTimer() {
+            timerDisplay.style.display = 'inline-flex';
+            timerSeconds = 0;
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const m = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const s = String(timerSeconds % 60).padStart(2, '0');
+                timerDisplay.textContent = m + ':' + s;
+            }, 1000);
+        }
+
+        // ─── STEP 1: Setup via code ───
+        startBtn.addEventListener('click', async () => {
+            const code = interviewCode.value.trim();
+            const file = cvFile.files[0];
+            if (!code) { msg('Enter the interview code from your recruiter.', 'err'); return; }
+            if (!file) { msg('Please upload your CV.', 'err'); return; }
+
+            startBtn.disabled = true;
+            msg('Setting up session... (this takes 15-30s)');
+
+            try {
+                const fd = new FormData();
+                fd.append('code', code.toUpperCase());
+                fd.append('cv_file', file);
+                fd.append('cv_text', '');
+
+                const res = await fetch(`${API}/setup-by-code`, { method: 'POST', body: fd });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Setup failed');
+
+                currentSessionId = data.session_id;
+                sessionTag.textContent = currentSessionId.substring(0, 8) + '...';
+
+                if (data.candidate) $('c-name').textContent = data.candidate.name || '—';
+                if (data.job) $('c-role').textContent = data.job.title || '—';
+                $('c-status').textContent = 'Ready';
+                $('c-status').style.color = 'var(--green)';
+                candidateInfo.style.display = 'block';
+
+                msg('Session ready! Testing microphone...', 'ok');
+
+                // Move to mic test
+                setupState.style.display = 'none';
+                micTestState.style.display = 'flex';
+                await initMicTest();
+
+            } catch (err) {
+                msg(err.message, 'err');
+                startBtn.disabled = false;
+            }
+        });
+
+        // ─── Mic Test ───
+        let micTestAnalyser, micTestStream;
+        const NUM_BARS = 20;
+
+        async function initMicTest() {
+            const barsContainer = $('level-bars');
+            barsContainer.innerHTML = '';
+            for (let i = 0; i < NUM_BARS; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'level-bar';
+                bar.style.height = '4px';
+                barsContainer.appendChild(bar);
+            }
+
+            try {
+                micTestStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                micTestAnalyser = ctx.createAnalyser();
+                const src = ctx.createMediaStreamSource(micTestStream);
+                src.connect(micTestAnalyser);
+                micTestAnalyser.fftSize = 64;
+
+                const data = new Uint8Array(micTestAnalyser.frequencyBinCount);
+                const bars = barsContainer.children;
+
+                function draw() {
+                    if (!micTestAnalyser) return;
+                    micTestAnalyser.getByteFrequencyData(data);
+                    for (let i = 0; i < NUM_BARS; i++) {
+                        const val = data[i] || 0;
+                        const h = Math.max(4, (val / 255) * 50);
+                        bars[i].style.height = h + 'px';
+                        bars[i].className = val > 20 ? 'level-bar active' : 'level-bar';
+                    }
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            } catch (err) {
+                msg('Microphone access denied.', 'err');
+            }
+        }
+
+        $('mic-ok-btn').addEventListener('click', async () => {
+            // Stop mic test stream (will re-acquire with video)
+            if (micTestStream) micTestStream.getTracks().forEach(t => t.stop());
+            micTestAnalyser = null;
+
+            micTestState.style.display = 'none';
+            interviewUi.style.display = 'flex';
+            $('c-status').textContent = 'In Progress';
+
+            await initHardware();
+            startTimer();
+            await startInterview();
+        });
+
+        // ─── STEP 2: Start Interview ───
+        async function startInterview() {
+            speakerLabel.textContent = 'System';
+            transcriptDisplay.textContent = 'Starting interview...';
+            isAiSpeaking = true;
+
+            const fd = new FormData();
+            fd.append('session_id', currentSessionId);
+
+            try {
+                const res = await fetch(`${API}/start`, { method: 'POST', body: fd });
+                if (!res.ok) { const e = await res.json().catch(() => ({})); throw new Error(e.error || 'Failed to start'); }
+
+                const contentType = res.headers.get('content-type') || '';
+                const responseText = res.headers.get('X-Response') || '';
+
+                speakerLabel.textContent = 'Interviewer';
+                transcriptDisplay.textContent = responseText || 'Welcome! Let\'s begin.';
+                micOrb.className = 'mic-orb speaking';
+                callStatus.textContent = 'AI is speaking...';
+
+                if (contentType.includes('audio')) {
+                    const blob = await res.blob();
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audio.onended = () => { isAiSpeaking = false; setReadyState(); };
+                    audio.play().catch(() => { isAiSpeaking = false; micOrb.className = 'mic-orb'; });
+                } else {
+                    try { const d = await res.json().catch(() => null); if (d?.response) transcriptDisplay.textContent = d.response; } catch (e) { }
+                    setTimeout(() => { isAiSpeaking = false; setReadyState(); }, 3000);
+                }
+            } catch (err) {
+                transcriptDisplay.textContent = 'Error: ' + err.message;
+                isAiSpeaking = false; micOrb.className = 'mic-orb';
+            }
+        }
+
+        // ─── Hardware Init ───
+        async function initHardware() {
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
+                    video: { width: 320, height: 240, facingMode: 'user' }
+                });
+
+                userVideo.srcObject = localStream;
+                cameraPip.style.display = 'block';
+
+                // MediaPipe Eye Tracking
+                initEyeTracking();
+
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                microphone = audioContext.createMediaStreamSource(localStream);
+                microphone.connect(analyser);
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.5;
+
+                mediaRecorder = new MediaRecorder(new MediaStream(localStream.getAudioTracks()), { mimeType: 'audio/webm' });
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.onstop = () => { const blob = new Blob(audioChunks, { type: 'audio/webm' }); audioChunks = []; sendAudio(blob); };
+
+                hardwareReady = true;
+                console.log('[NEXUS] Hardware initialized, hold Tab to record.');
+            } catch (err) { callStatus.textContent = 'Hardware error: ' + err.message; console.error(err); }
+        }
+
+        // ─── Hold-to-Talk (GLOBAL scope) ───
+        let hardwareReady = false;
+        let isRecording = false;
+
+        function startRecording() {
+            if (!hardwareReady) { console.warn('Hardware not ready'); return; }
+            if (isAiSpeaking || isRecording) return;
+            try {
+                mediaRecorder.start();
+                isRecording = true;
+                micOrb.className = 'mic-orb recording';
+                $('speak-hint').style.display = 'none';
+                speakerLabel.textContent = 'You';
+                transcriptDisplay.textContent = 'Listening... (release Tab when done)';
+                callStatus.textContent = '● Recording';
+                console.log('[NEXUS] Recording started');
+            } catch (e) { console.error('Record start failed:', e); }
+        }
+
+        function stopRecording() {
+            if (!isRecording) return;
+            isRecording = false;
+            try {
+                if (mediaRecorder?.state === 'recording') {
+                    mediaRecorder.stop();
+                    micOrb.className = 'mic-orb processing';
+                    callStatus.textContent = 'Processing...';
+                    speakerLabel.textContent = 'System';
+                    transcriptDisplay.textContent = 'Analyzing your response...';
+                    console.log('[NEXUS] Recording stopped, sending...');
+                }
+            } catch (e) { console.error('Record stop failed:', e); }
+        }
+
+        // Tab key: hold to record, release to stop
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab' && !e.repeat) { e.preventDefault(); startRecording(); }
+        });
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'Tab') { e.preventDefault(); stopRecording(); }
+        });
+        // Click mic = toggle for mouse users
+        micOrb.addEventListener('click', () => {
+            if (isRecording) stopRecording(); else startRecording();
+        });
+
+        // ─── MediaPipe Eye Tracking ───
+        function initEyeTracking() {
+            try {
+                const faceMesh = new FaceMesh({
+                    locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/${file}`
+                });
+                faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+
+                faceMesh.onResults((results) => {
+                    if (!results.multiFaceLandmarks || results.multiFaceLandmarks.length === 0) {
+                        eyeBadge.textContent = 'EYE: NO FACE';
+                        eyeBadge.style.color = '#ef4444';
+                        return;
+                    }
+                    const lm = results.multiFaceLandmarks[0];
+                    // Iris landmarks (refineLandmarks=true): Left iris center=468, Right iris center=473
+                    // Left eye corners: inner=133, outer=33. Right eye corners: inner=362, outer=263.
+                    const leftIris = lm[468]; const leftInner = lm[133]; const leftOuter = lm[33];
+                    const rightIris = lm[473]; const rightInner = lm[362]; const rightOuter = lm[263];
+
+                    const leftRatio = (leftIris.x - leftOuter.x) / (leftInner.x - leftOuter.x);
+                    const rightRatio = (rightIris.x - rightOuter.x) / (rightInner.x - rightOuter.x);
+                    const avgRatio = (leftRatio + rightRatio) / 2;
+
+                    // ~0.4 to ~0.6 = looking at camera
+                    if (avgRatio > 0.35 && avgRatio < 0.65) {
+                        eyeBadge.textContent = 'EYE: FOCUSED';
+                        eyeBadge.style.color = '#10b981';
+                    } else {
+                        eyeBadge.textContent = 'EYE: AWAY';
+                        eyeBadge.style.color = '#ef4444';
+                    }
+                });
+
+                const camera = new Camera(userVideo, {
+                    onFrame: async () => { await faceMesh.send({ image: userVideo }); },
+                    width: 320, height: 240
+                });
+                camera.start();
+            } catch (err) {
+                console.warn('MediaPipe not available, using fallback:', err);
+                // Fallback to simple face detection
+                setInterval(() => {
+                    eyeBadge.textContent = 'EYE: N/A';
+                    eyeBadge.style.color = 'var(--muted)';
+                }, 2000);
+            }
+        }
+
+        // ─── Chat loop ───
+        async function sendAudio(audioBlob) {
+            isAiSpeaking = true;
+            const t0 = Date.now();
+            latencyChip.style.display = 'inline-flex';
+            latencyChip.textContent = '...';
+
+            const fd = new FormData();
+            fd.append('session_id', currentSessionId);
+            fd.append('file', audioBlob, 'recording.webm');
+
+            try {
+                const res = await fetch(`${API}/chat`, { method: 'POST', body: fd });
+                const latency = Date.now() - t0;
+                latencyChip.textContent = latency + 'ms';
+                if (!res.ok) throw new Error('Chat failed');
+
+                const contentType = res.headers.get('content-type') || '';
+                const userText = res.headers.get('X-Transcript') || '';
+                const aiText = res.headers.get('X-Response') || '';
+                const complete = res.headers.get('X-Complete') === 'true';
+
+                speakerLabel.textContent = 'You';
+                transcriptDisplay.textContent = userText || '(Processing...)';
+                questionCount++;
+                $('q-progress').textContent = questionCount + ' / 10';
+
+                setTimeout(() => {
+                    speakerLabel.textContent = 'Interviewer';
+                    transcriptDisplay.textContent = aiText || 'Next question...';
+                    micOrb.className = 'mic-orb speaking';
+                    callStatus.textContent = 'AI is speaking...';
+                }, 600);
+
+                if (complete) {
+                    if (timerInterval) clearInterval(timerInterval);
+                    setTimeout(() => {
+                        callStatus.textContent = 'Interview complete.';
+                        micOrb.className = 'mic-orb';
+                        $('c-status').textContent = 'Completed';
+                        $('c-status').style.color = 'var(--accent)';
+                        speakerLabel.textContent = 'System';
+                        transcriptDisplay.textContent = '✓ Interview complete. Thank you for your time. Your recruiter will review your evaluation.';
+                        isAiSpeaking = true;
+                    }, 1000);
+                    return;
+                }
+
+                if (contentType.includes('audio')) {
+                    const blob = await res.blob();
+                    const audio = new Audio(URL.createObjectURL(blob));
+                    audio.onended = () => { isAiSpeaking = false; setReadyState(); };
+                    audio.play().catch(() => { isAiSpeaking = false; setReadyState(); });
+                } else {
+                    try { const d = await res.json().catch(() => null); if (d) { if (d.transcript) { speakerLabel.textContent = 'You'; transcriptDisplay.textContent = d.transcript; } setTimeout(() => { speakerLabel.textContent = 'Interviewer'; transcriptDisplay.textContent = d.response || aiText; }, 600); } } catch (e) { }
+                    setTimeout(() => { isAiSpeaking = false; setReadyState(); }, 3000);
+                }
+            } catch (err) {
+                transcriptDisplay.textContent = 'Error: ' + err.message;
+                micOrb.className = 'mic-orb'; isAiSpeaking = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

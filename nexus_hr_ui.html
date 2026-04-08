@@ -1,0 +1,1136 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | HR Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --hover: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #0f172a;
+            --muted: #64748b;
+            --subtle: #94a3b8;
+            --primary: #0f172a;
+            --accent: #1e293b;
+            --accent-light: #334155;
+            --green: #10b981;
+            --green-bg: #ecfdf5;
+            --green-border: #a7f3d0;
+            --red: #ef4444;
+            --red-bg: #fef2f2;
+            --red-border: #fecaca;
+            --orange: #f59e0b;
+            --blue: #3b82f6;
+            --radius: 10px;
+            --radius-lg: 16px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+            --sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --mono: 'JetBrains Mono', monospace;
+            --gradient: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+        }
+
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --card: #18181b;
+            --hover: #27272a;
+            --border: #3f3f46;
+            --text: #fafafa;
+            --muted: #a1a1aa;
+            --subtle: #71717a;
+            --primary: #fafafa;
+            --accent: #94a3b8;
+            --accent-light: #cbd5e1;
+            --green: #34d399;
+            --green-bg: rgba(16, 185, 129, 0.1);
+            --green-border: rgba(16, 185, 129, 0.2);
+            --red: #f87171;
+            --red-bg: rgba(239, 68, 68, 0.1);
+            --red-border: rgba(239, 68, 68, 0.2);
+            --orange: #fbbf24;
+            --blue: #60a5fa;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--sans);
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+            transition: background .3s, color .3s;
+        }
+
+        /* ─── Topbar ─── */
+        .topbar {
+            height: 56px;
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            flex-shrink: 0;
+            transition: background .3s;
+            z-index: 50;
+        }
+
+        .topbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .brand-icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 0.7rem;
+        }
+
+        .brand-text {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .brand-tag {
+            font-size: 0.6rem;
+            background: var(--hover);
+            color: var(--muted);
+            padding: 2px 8px;
+            border-radius: 99px;
+            border: 1px solid var(--border);
+            font-weight: 500;
+        }
+
+        .topbar-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            width: 34px;
+            height: 34px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--card);
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all .15s;
+            font-size: 0.9rem;
+        }
+
+        .icon-btn:hover {
+            background: var(--hover);
+            color: var(--text);
+        }
+
+        /* ─── Layout ─── */
+        .app {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ─── Sidebar ─── */
+        .sidebar {
+            width: 300px;
+            background: var(--card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: background .3s;
+        }
+
+        .sidebar-block {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-block:last-child {
+            border-bottom: none;
+        }
+
+        .block-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--subtle);
+            margin-bottom: 0.6rem;
+        }
+
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 0.7rem;
+            font-size: 0.8rem;
+            font-family: var(--sans);
+            color: var(--text);
+            background: var(--bg);
+            transition: all .15s;
+            margin-bottom: 0.5rem;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+        }
+
+        textarea::placeholder {
+            color: var(--subtle);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            border: none;
+            padding: 0.55rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.8rem;
+            font-weight: 600;
+            font-family: var(--sans);
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .btn-accent {
+            background: var(--gradient);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+        }
+
+        .btn-accent:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.4);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            box-shadow: none;
+            padding: 0.4rem 0.7rem;
+            font-size: 0.75rem;
+        }
+
+        .btn-ghost:hover {
+            background: var(--hover);
+            color: var(--text);
+        }
+
+        .code-output {
+            margin-top: 0.5rem;
+        }
+
+        .code-box {
+            background: var(--bg);
+            border: 2px dashed var(--blue);
+            border-radius: var(--radius);
+            padding: 0.6rem;
+            text-align: center;
+            font-family: var(--mono);
+            font-size: 1.6rem;
+            font-weight: 800;
+            letter-spacing: 0.25em;
+            color: var(--blue);
+            user-select: all;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .code-caption {
+            font-size: 0.7rem;
+            color: var(--subtle);
+            text-align: center;
+            margin-top: 0.35rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        .code-chip {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.35rem 0.5rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .code-chip:last-child {
+            border-bottom: none;
+        }
+
+        .code-chip-code {
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--blue);
+            letter-spacing: 0.1em;
+        }
+
+        .code-chip-jd {
+            color: var(--subtle);
+            font-size: 0.7rem;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* ─── Session List ─── */
+        .session-scroll {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .session-item {
+            padding: 0.7rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: all .15s;
+        }
+
+        .session-item:hover {
+            background: var(--hover);
+        }
+
+        .session-item.active {
+            background: var(--hover);
+            border-left: 3px solid var(--blue);
+        }
+
+        .session-name {
+            font-size: 0.82rem;
+            font-weight: 600;
+            margin-bottom: 0.15rem;
+        }
+
+        .session-meta {
+            font-size: 0.68rem;
+            color: var(--subtle);
+            display: flex;
+            gap: 0.4rem;
+            align-items: center;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .dot-green {
+            background: var(--green);
+        }
+
+        .dot-orange {
+            background: var(--orange);
+        }
+
+        .dot-blue {
+            background: var(--blue);
+        }
+
+        .dot-gray {
+            background: var(--subtle);
+        }
+
+        /* ─── Main Panel ─── */
+        .main {
+            flex: 1;
+            overflow-y: auto;
+            background: var(--bg);
+            transition: background .3s;
+        }
+
+        .empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            gap: 0.75rem;
+            color: var(--subtle);
+        }
+
+        .empty svg {
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--muted);
+        }
+
+        .empty-sub {
+            font-size: 0.8rem;
+        }
+
+        /* ─── Report ─── */
+        .report {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .report-hero {
+            background: var(--gradient);
+            border-radius: var(--radius-lg);
+            padding: 1.75rem 2rem;
+            color: #fff;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .report-hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 50%;
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-name {
+            font-size: 1.4rem;
+            font-weight: 800;
+        }
+
+        .hero-role {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 0.15rem;
+        }
+
+        .hero-badge {
+            padding: 0.35rem 0.9rem;
+            border-radius: 99px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(4px);
+        }
+
+        .hero-badge.hire {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .hero-badge.reject {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.5);
+        }
+
+        .hero-badge.pending {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+            margin-top: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+        }
+
+        .stat-val {
+            font-size: 1.5rem;
+            font-weight: 800;
+            font-family: var(--mono);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            opacity: 0.7;
+            margin-top: 0.1rem;
+        }
+
+        /* Cards grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            transition: all .3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--subtle);
+        }
+
+        .card-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* Score bars */
+        .score-item {
+            margin-bottom: 0.9rem;
+        }
+
+        .score-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .score-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 0.3rem;
+        }
+
+        .score-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: capitalize;
+        }
+
+        .score-val {
+            font-size: 0.8rem;
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--blue);
+        }
+
+        .score-track {
+            height: 6px;
+            background: var(--hover);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .score-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: var(--gradient);
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Radar chart container */
+        .chart-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 250px;
+            margin: 0 auto;
+        }
+
+        /* Gaps */
+        .gap-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.35rem;
+        }
+
+        .gap-tag {
+            padding: 0.25rem 0.6rem;
+            border-radius: 99px;
+            font-size: 0.72rem;
+            font-weight: 500;
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid var(--red-border);
+        }
+
+        /* Evaluation */
+        .eval-box {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem 1.25rem;
+            font-size: 0.85rem;
+            line-height: 1.7;
+            color: var(--text);
+        }
+
+        /* Per-question table */
+        .pq-card {
+            grid-column: 1 / -1;
+        }
+
+        .pq-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            font-size: 0.8rem;
+        }
+
+        .pq-table thead th {
+            text-align: left;
+            font-weight: 700;
+            color: var(--subtle);
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.6rem 0.75rem;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .pq-table td {
+            padding: 0.65rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+
+        .pq-table tbody tr:hover {
+            background: var(--hover);
+        }
+
+        .pq-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pq-num {
+            width: 32px;
+            text-align: center;
+            font-family: var(--mono);
+            font-weight: 700;
+            color: var(--subtle);
+        }
+
+        .pq-score {
+            font-family: var(--mono);
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--accent);
+        }
+
+        .pq-answer {
+            color: var(--muted);
+            font-size: 0.75rem;
+            max-width: 200px;
+            line-height: 1.4;
+        }
+
+        /* Transcript */
+        .transcript-section {
+            margin-top: 1.5rem;
+        }
+
+        .transcript-container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .transcript-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .transcript-scroll {
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .msg {
+            padding: 0.7rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .msg.ai {
+            background: var(--hover);
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .msg.user {
+            background: color-mix(in srgb, var(--blue) 8%, var(--card));
+            border: 1px solid color-mix(in srgb, var(--blue) 15%, var(--border));
+            align-self: flex-end;
+            text-align: right;
+            border-bottom-right-radius: 4px;
+        }
+
+        .msg-role {
+            font-size: 0.6rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--subtle);
+            margin-bottom: 0.2rem;
+        }
+
+        /* Print */
+        @media print {
+
+            .topbar,
+            .sidebar,
+            .hero-actions {
+                display: none !important;
+            }
+
+            .app {
+                display: block !important;
+            }
+
+            .main {
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+
+            body {
+                background: #fff !important;
+                color: #000 !important;
+                height: auto !important;
+            }
+
+            .report-hero {
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+
+            .card {
+                break-inside: avoid;
+                box-shadow: none !important;
+            }
+
+            .transcript-scroll {
+                max-height: none !important;
+                overflow: visible !important;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .app {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                max-height: 35vh;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-brand">
+            <div class="brand-icon">N</div>
+            <span class="brand-text">NEXUS</span>
+            <span class="brand-tag">HR Intelligence</span>
+        </div>
+        <div class="topbar-actions">
+            <button class="icon-btn" onclick="loadSessions(); loadCodes();" title="Refresh">↻</button>
+            <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">◑</button>
+        </div>
+    </div>
+
+    <div class="app">
+        <div class="sidebar">
+            <div class="sidebar-block">
+                <div class="block-title">Create Interview</div>
+                <textarea id="jd-input" placeholder="Paste job description..."></textarea>
+                <button id="gen-code-btn" class="btn btn-accent btn-full">Generate Code</button>
+                <div id="code-result" class="code-output"></div>
+            </div>
+            <div class="sidebar-block" id="codes-section" style="display:none;">
+                <div class="block-title">Active Codes</div>
+                <div id="codes-list"></div>
+            </div>
+            <div class="sidebar-block" style="padding-bottom:0;">
+                <div class="block-title">Sessions</div>
+            </div>
+            <div class="session-scroll" id="session-list">
+                <div class="empty" style="padding:2rem;height:auto;"><span class="empty-sub">No sessions yet</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main" id="main-content">
+            <div class="empty">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="16" y1="13" x2="8" y2="13" />
+                    <line x1="16" y1="17" x2="8" y2="17" />
+                </svg>
+                <span class="empty-title">No Report Selected</span>
+                <span class="empty-sub">Create an interview code and share it with candidates</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = window.location.origin;
+        const mainContent = document.getElementById('main-content');
+        const sessionList = document.getElementById('session-list');
+
+        function toggleTheme() {
+            const d = document.body.getAttribute('data-theme') === 'dark';
+            document.body.setAttribute('data-theme', d ? '' : 'dark');
+            localStorage.setItem('nexus-theme', d ? 'light' : 'dark');
+        }
+        (function () { if (localStorage.getItem('nexus-theme') === 'dark') document.body.setAttribute('data-theme', 'dark'); })();
+
+        // ── Generate Code ──
+        document.getElementById('gen-code-btn').addEventListener('click', async () => {
+            const jd = document.getElementById('jd-input').value.trim();
+            if (!jd) return;
+            const btn = document.getElementById('gen-code-btn');
+            btn.textContent = 'Generating...'; btn.disabled = true;
+            try {
+                const fd = new FormData(); fd.append('jd_text', jd);
+                const res = await fetch(`${API}/create-interview`, { method: 'POST', body: fd });
+                const data = await res.json();
+                document.getElementById('code-result').innerHTML = `
+            <div class="code-box">${data.code}</div>
+            <div class="code-caption">Share this code with the candidate</div>`;
+                document.getElementById('jd-input').value = '';
+                loadCodes();
+            } catch (e) {
+                document.getElementById('code-result').innerHTML = `<div style="color:var(--red);font-size:0.8rem;">Failed</div>`;
+            }
+            btn.textContent = 'Generate Code'; btn.disabled = false;
+        });
+
+        // ── Load Codes ──
+        async function loadCodes() {
+            try {
+                const res = await fetch(`${API}/interview-codes`);
+                const codes = await res.json();
+                const section = document.getElementById('codes-section');
+                const list = document.getElementById('codes-list');
+                if (!codes.length) { section.style.display = 'none'; return; }
+                section.style.display = 'block';
+                list.innerHTML = codes.map(c => `
+            <div class="code-chip">
+                <span class="code-chip-code">${c.code}</span>
+                <span class="code-chip-jd">${c.jd_preview}</span>
+            </div>`).join('');
+            } catch (e) { }
+        }
+
+        // ── Load Sessions ──
+        async function loadSessions() {
+            try {
+                const res = await fetch(`${API}/debug/sessions`);
+                const sessions = await res.json();
+                if (!Array.isArray(sessions) || !sessions.length) {
+                    sessionList.innerHTML = `<div class="empty" style="padding:2rem;height:auto;"><span class="empty-sub">No sessions yet</span></div>`;
+                    return;
+                }
+                sessionList.innerHTML = '';
+                for (const s of sessions) {
+                    const item = document.createElement('div');
+                    item.className = 'session-item';
+                    const dotClass = s.status === 'completed' ? 'dot-green' : s.status === 'interviewing' ? 'dot-orange' : s.status === 'ready' ? 'dot-blue' : 'dot-gray';
+                    item.innerHTML = `
+                <div class="session-name">${s.candidate_name || 'Unknown'}</div>
+                <div class="session-meta">
+                    <span class="dot ${dotClass}"></span>
+                    ${s.status} · ${s.questions_answered || 0}/${s.total_questions || 0}
+                    ${s.job_title ? ' · ' + s.job_title : ''}
+                </div>`;
+                    item.addEventListener('click', () => {
+                        document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
+                        item.classList.add('active');
+                        loadReport(s.id);
+                    });
+                    sessionList.appendChild(item);
+                }
+            } catch (e) {
+                sessionList.innerHTML = `<div class="empty" style="padding:2rem;height:auto;color:var(--red);">Load failed</div>`;
+            }
+        }
+
+        // ── Load Report ──
+        async function loadReport(sid) {
+            mainContent.innerHTML = `<div class="empty"><span class="empty-title">Generating Report...</span></div>`;
+            try {
+                const res = await fetch(`${API}/report?session_id=${sid}`);
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error || 'Failed');
+                renderReport(data, sid);
+            } catch (e) {
+                mainContent.innerHTML = `<div class="empty" style="color:var(--red);">${e.message}</div>`;
+            }
+        }
+
+        function renderReport(data, sid) {
+            const name = data.candidate?.name || 'Unknown';
+            const role = data.job?.title || 'Unknown Role';
+            const scores = data.rubric_scores || {};
+            const rec = data.recommendation || {};
+            const transcript = data.transcript || [];
+            const gaps = data.gap_analysis || {};
+            const perQ = data.per_question_scores || [];
+
+            // Decision
+            const dec = (rec.hiring_decision || '').toLowerCase();
+            let badgeClass = 'pending', badgeText = rec.hiring_decision || 'Pending';
+            if (dec.includes('hire') || dec.includes('yes')) badgeClass = 'hire';
+            else if (dec.includes('reject') || dec.includes('no')) badgeClass = 'reject';
+
+            // Overall score
+            const scoreVals = Object.values(scores).filter(v => typeof v === 'number');
+            const overallScore = scoreVals.length ? (scoreVals.reduce((a, b) => a + b, 0) / scoreVals.length).toFixed(1) : '—';
+
+            // Score bars
+            const scoreKeys = Object.keys(scores);
+            let scoreBarsHtml = scoreKeys.map(k => {
+                const v = scores[k]; const pct = v <= 5 ? (v / 5) * 100 : v;
+                return `<div class="score-item"><div class="score-top"><span class="score-name">${k.replace(/_/g, ' ')}</span><span class="score-val">${v}/5</span></div><div class="score-track"><div class="score-fill" style="width:0%" data-width="${pct}%"></div></div></div>`;
+            }).join('');
+
+            // Gaps
+            let gapHtml = '';
+            if (gaps?.missing_skills?.length) {
+                gapHtml = `<div style="margin-top:1.25rem;"><div class="block-title" style="margin-bottom:0.5rem;">Skill Gaps Identified</div><div class="gap-grid">${gaps.missing_skills.map(s => `<span class="gap-tag">${s}</span>`).join('')}</div></div>`;
+            }
+
+            // Per-question table
+            let pqHtml = '';
+            if (perQ.length) {
+                const rows = perQ.map((q, i) => `
+            <tr>
+                <td class="pq-num">${i + 1}</td>
+                <td>${q.question_text || '—'}</td>
+                <td class="pq-score">${q.average_score || '—'}</td>
+                <td class="pq-answer">${q.answer_text ? q.answer_text.substring(0, 120) + '...' : '—'}</td>
+            </tr>`).join('');
+                pqHtml = `<div class="card pq-card"><div class="card-header"><span class="card-title">Per-Question Breakdown</span></div><div style="overflow-x:auto;"><table class="pq-table"><thead><tr><th>#</th><th>Question</th><th>Score</th><th>Answer</th></tr></thead><tbody>${rows}</tbody></table></div></div>`;
+            }
+
+            // Transcript
+            let transcriptHtml = '';
+            if (transcript.length) {
+                const msgs = transcript.map(t => {
+                    const isUser = t.role === 'user';
+                    return `<div class="msg ${isUser ? 'user' : 'ai'}"><div class="msg-role">${isUser ? name : 'NEXUS'}</div>${t.content}</div>`;
+                }).join('');
+                transcriptHtml = `<div class="transcript-section"><div class="transcript-container"><div class="transcript-header"><span class="card-title" style="margin:0;">Conversation Transcript</span><span style="font-size:0.7rem;color:var(--subtle);">${transcript.length} messages</span></div><div class="transcript-scroll">${msgs}</div></div></div>`;
+            }
+
+            mainContent.innerHTML = `
+        <div class="report">
+            <div class="report-hero">
+                <div class="hero-top">
+                    <div>
+                        <div class="hero-name">${name}</div>
+                        <div class="hero-role">${role} · ${sid.substring(0, 8)}</div>
+                    </div>
+                    <div style="display:flex;gap:0.5rem;align-items:center;">
+                        <span class="hero-badge ${badgeClass}">${badgeText}</span>
+                        <button class="btn-ghost" style="color:#fff;border-color:rgba(255,255,255,0.3);" onclick="window.print()">📄 Export</button>
+                    </div>
+                </div>
+                <div class="stats-row">
+                    <div class="stat-card"><div class="stat-val">${overallScore}</div><div class="stat-label">Overall Score</div></div>
+                    <div class="stat-card"><div class="stat-val">${scoreKeys.length}</div><div class="stat-label">Criteria</div></div>
+                    <div class="stat-card"><div class="stat-val">${perQ.length || transcript.filter(t => t.role === 'user').length}</div><div class="stat-label">Questions</div></div>
+                    <div class="stat-card"><div class="stat-val">${transcript.length}</div><div class="stat-label">Messages</div></div>
+                </div>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Rubric Scores</span>
+                        <div class="card-icon" style="background:color-mix(in srgb, var(--accent) 10%, var(--card));color:var(--accent);">📊</div>
+                    </div>
+                    ${scoreBarsHtml || '<div style="color:var(--subtle);font-size:0.85rem;">No scores available</div>'}
+                    ${gapHtml}
+                </div>
+                <div class="card" id="radar-card">
+                    <div class="card-header">
+                        <span class="card-title">Competency Radar</span>
+                        <div class="card-icon" style="background:color-mix(in srgb, var(--green) 10%, var(--card));color:var(--green);">🎯</div>
+                    </div>
+                    <div class="chart-wrap"><canvas id="radar-chart"></canvas></div>
+                </div>
+                <div class="card" style="grid-column:1/-1;">
+                    <div class="card-header">
+                        <span class="card-title">Evaluation Summary</span>
+                        <div class="card-icon" style="background:color-mix(in srgb, var(--blue) 10%, var(--card));color:var(--blue);">💡</div>
+                    </div>
+                    <div class="eval-box">${(rec.reasoning || 'No evaluation yet.').replace(/\n/g, '<br/>')}</div>
+                </div>
+                ${pqHtml}
+            </div>
+            ${transcriptHtml}
+        </div>`;
+
+            // Animate score bars
+            requestAnimationFrame(() => {
+                document.querySelectorAll('.score-fill[data-width]').forEach(el => {
+                    el.style.width = el.dataset.width;
+                });
+            });
+
+            // Radar chart
+            if (scoreKeys.length >= 3 && typeof Chart !== 'undefined') {
+                const ctx = document.getElementById('radar-chart');
+                if (ctx) {
+                    const isDark = document.body.getAttribute('data-theme') === 'dark';
+                    new Chart(ctx, {
+                        type: 'radar',
+                        data: {
+                            labels: scoreKeys.map(k => k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
+                            datasets: [{
+                                data: scoreVals,
+                                backgroundColor: 'rgba(59,130,246,0.15)',
+                                borderColor: 'rgba(59,130,246,0.8)',
+                                borderWidth: 2,
+                                pointBackgroundColor: 'rgba(59,130,246,1)',
+                                pointRadius: 4,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                r: {
+                                    beginAtZero: true, max: 5,
+                                    ticks: { stepSize: 1, font: { size: 9, family: 'Inter' }, color: isDark ? '#71717a' : '#94a3b8', backdropColor: 'transparent' },
+                                    grid: { color: isDark ? '#3f3f46' : '#e2e8f0' },
+                                    angleLines: { color: isDark ? '#3f3f46' : '#e2e8f0' },
+                                    pointLabels: { font: { size: 10, family: 'Inter', weight: '500' }, color: isDark ? '#a1a1aa' : '#64748b' }
+                                }
+                            }
+                        }
+                    });
+                }
+            } else if (scoreKeys.length < 3) {
+                const rc = document.getElementById('radar-card');
+                if (rc) rc.querySelector('.chart-wrap').innerHTML = '<div style="color:var(--subtle);font-size:0.85rem;text-align:center;padding:2rem;">Need 3+ criteria for radar chart</div>';
+            }
+        }
+
+        // Init
+        loadSessions(); loadCodes();
+        setInterval(loadSessions, 10000);
+    </script>
+</body>
+
+</html>

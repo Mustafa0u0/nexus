@@ -1,0 +1,60 @@
+﻿On branch main
+Your branch is up to date with 'origin/main'.
+
+Untracked files:
+  (use "git add <file>..." to include in what will be committed)
+	debug_git.py
+	out.txt
+	test_file.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+[main 18c43b8] Update NEXUS to 10-dimension rubric and 10-question framework
+ 3 files changed, 13 insertions(+)
+ create mode 100644 debug_git.py
+ create mode 100644 out.txt
+ create mode 100644 test_file.txt
+origin	https://github.com/Mustafa0u0/nexus (fetch)
+origin	https://github.com/Mustafa0u0/nexus (push)
+git : To https://github.com/M
+ustafa0u0/nexus
+At line:1 char:181
++ ... mote -v >> out.txt 
+2>&1; git push origin main 
+>> out.txt 2>&1; git pu ...
++                            
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (To http  
+  s://github.com/Mustafa0u   
+ 0/nexus:String) [], Remo    
+teException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+   bc0b371..18c43b8  main -> 
+main
+git : fatal: 'heroku' does 
+not appear to be a git 
+repository
+At line:1 char:219
++ ... ush origin main >> 
+out.txt 2>&1; git push 
+heroku main >> out.txt 2>&1
++                            
+          ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (fatal:   
+  'heroku'... git reposito   
+ ry:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+fatal: Could not read from 
+remote repository.
+
+Please make sure you have 
+the correct access rights
+and the repository exists.

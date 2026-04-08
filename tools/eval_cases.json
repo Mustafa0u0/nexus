@@ -1,0 +1,12 @@
+[
+  {
+    "case_id": "case_software_engineer",
+    "cv_text": "SOFTWARE ENGINEER\nExperience: 5 years Python, FastAPI, AWS. Built async APIs and CI/CD pipelines.",
+    "jd_text": "Senior Python Developer\nRequirements: Python, FastAPI, AWS, Docker, CI/CD.",
+    "answers": [
+      "I led a FastAPI migration, reducing latency by 30% and improving uptime.",
+      "I use Docker for consistent deployments and GitHub Actions for CI/CD.",
+      "On AWS I designed a system with S3, Lambda, and CloudWatch for monitoring."
+    ]
+  }
+]

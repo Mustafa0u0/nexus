@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | AI-Powered Interview Platform</title>
+    <meta name="description" content="NEXUS: AI-powered interview platform for structured hiring with real-time assessment and competency-based scoring.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Color system */
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --primary: #0f172a;
+            --accent: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+
+            /* UI tokens */
+            --border: #e2e8f0;
+            --radius: 16px;
+            --transition: 250ms ease;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            transition: background-color var(--transition), color var(--transition);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --surface: #1e293b;
+                --text: #f1f5f9;
+                --text-muted: #94a3b8;
+                --primary: #f1f5f9;
+                --accent: #60a5fa;
+                --success: #34d399;
+                --warning: #fbbf24;
+                --border: #334155;
+            }
+            .logo-icon {
+                background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+            }
+            .role-icon.candidate {
+                background: linear-gradient(135deg, #059669, #10b981) !important;
+                color: #ecfdf5 !important;
+            }
+            .role-icon.recruiter {
+                background: linear-gradient(135deg, #1d4ed8, #3b82f6) !important;
+                color: #eff6ff !important;
+            }
+        }
+
+        .container {
+            text-align: center;
+            max-width: 720px;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #0f172a, #1e293b, #334155);
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 800;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
+            transition: transform var(--transition);
+        }
+
+        .logo:hover .logo-icon {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .logo-text {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.125rem;
+            line-height: 1.7;
+            margin-bottom: 3rem;
+            max-width: 50rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .role-card {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 1.5rem;
+            cursor: pointer;
+            transition: all var(--transition) cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--success));
+            transform: scaleX(0);
+            transition: transform var(--transition);
+        }
+
+        .role-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+        }
+
+        .role-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .role-card:active {
+            transform: translateY(-4px) scale(0.99);
+        }
+
+        .role-card:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 4px;
+        }
+
+        .role-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: calc(var(--radius) / 1.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: transform var(--transition);
+        }
+
+        .role-card:hover .role-icon {
+            transform: scale(1.1);
+        }
+
+        .role-icon.candidate {
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+            color: #047857;
+        }
+
+        .role-icon.recruiter {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1d4ed8;
+        }
+
+        .role-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .role-desc {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .role-tag {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            background: var(--primary);
+            color: var(--surface);
+            transition: transform var(--transition), opacity var(--transition);
+        }
+
+        .role-card:hover .role-tag {
+            transform: translateY(-2px);
+            opacity: 0.9;
+        }
+
+        .footer {
+            margin-top: 4rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+            width: 100%;
+            max-width: 720px;
+            text-align: center;
+        }
+
+        .footer a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color var(--transition);
+        }
+
+        .footer a:hover {
+            color: var(--success);
+            text-decoration: underline;
+        }
+
+        @media (max-width: 520px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 1.5rem;
+            }
+            .logo-text {
+                font-size: 2rem;
+            }
+            .role-card {
+                padding: 2rem 1rem;
+            }
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">N</div>
+            <span class="logo-text">NEXUS</span>
+        </div>
+
+        <h1>AI-Powered Interview Platform</h1>
+        <p class="subtitle">Structured interviews with real-time AI assessment, competency-based scoring, and actionable hiring reports.</p>
+
+        <div class="cards">
+            <a href="/candidate" class="role-card" tabindex="0">
+                <div class="role-icon candidate">👤</div>
+                <div class="role-title">I'm a Candidate</div>
+                <div class="role-desc">Enter your interview code, upload your CV, and begin your AI-assisted interview.</div>
+                <span class="role-tag">Start Interview →</span>
+            </a>
+            <a href="/hr" class="role-card" tabindex="0">
+                <div class="role-icon recruiter">📋</div>
+                <div class="role-title">I'm a Recruiter</div>
+                <div class="role-desc">Post a job description, generate interview codes, and review candidate evaluation reports.</div>
+                <span class="role-tag">Open Dashboard →</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            Powered by NEXUS v2.0 · AI Interview Intelligence
+        </div>
+    </div>
+</body>
+</html>
